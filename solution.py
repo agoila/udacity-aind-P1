@@ -1,3 +1,4 @@
+import itertools
 assignments = []
 
 def assign_value(values, box, value):
@@ -30,7 +31,7 @@ def create_units(rows, cols):
     secondary_diag = [rows[i]+cols[::-1][i] for i in range(len(rows))]
     diagonal_units = main_diag + secondary_diag
     
-    myunitlist = row_units + column_units + square_units + diagonal_units
+    myunitlist = row_units + column_units + square_units 
     myunits = dict((s, [u for u in myunitlist if s in u]) for s in myboxes)
     mypeers = dict((s, set(sum(myunits[s],[]))-set([s])) for s in myboxes)
     
@@ -47,23 +48,41 @@ def naked_twins(values):
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
     
+    #rows = 'ABCDEFGHI'
+    #cols = '123456789'
+    
+    #_, unitlist, _, peers = create_units(rows, cols)
+    
+    #for unit in unitlist:
+    #    double_dgt_boxes = [box for box in unit if len(values[box]) == 2]
+    #    box_pairs = [box for box in double_dgt_boxes if len(double_dgt_boxes) == 2]
+    #    twin_pairs = [box for box in box_pairs if values[box_pairs[0]] == values[box_pairs[1]]]
+    #    if twin_pairs != []:
+    #        digits = values[twin_pairs[0]]
+    #        for box in unit:
+    #            if box != twin_pairs[0] and box != twin_pairs[1] and len(values[box]) > 1:
+    #                for digit in digits:
+    #                    values[box] = values[box].replace(digit, '')
+    
     rows = 'ABCDEFGHI'
     cols = '123456789'
     
-    _, unitlist, _, _ = create_units(rows, cols)
-    
-    for unit in unitlist:
-        double_dgt_boxes = [box for box in unit if len(values[box]) == 2]
-        box_pairs = [box for box in double_dgt_boxes if len(double_dgt_boxes) == 2]
-        twin_pairs = [box for box in box_pairs if values[box_pairs[0]] == values[box_pairs[1]]]
-        if twin_pairs != []:
-            digits = values[twin_pairs[0]]
-            for box in unit:
-                if box != twin_pairs[0] and box!= twin_pairs[1] and len(values[box]) > 2:
-                    for digit in digits:
-                        values[box] = values[box].replace(digit, '')
+    _, unitlist, _, peers = create_units(rows, cols)
+
+    double_dgt_boxes = [box for box in values.keys() if len(values[box]) == 2]
+    n_twins = [[box1, box2] for box1, box2 in itertools.combinations(double_dgt_boxes, 2) if values[box1] == values[box2]]
+    for twins in n_twins:
+        digits = [values[box] for box in twins][0]
+        twin_peers = [peers[box] for box in twins]
+        unique_peers = list(set(twin_peers[0] & twin_peers[1]))
+        for box in unique_peers:
+            for digit in digits:
+                if len(values[box]) > 1:
+                    values[box] = values[box].replace(digit, '')
     
     return values
+
+
 
 def grid_values(grid):
     """
@@ -110,19 +129,20 @@ def display(values):
     return
 
 def eliminate(values):
-    rows = 'ABCDEFGHI'
-    cols = '123456789'
+    #rows = 'ABCDEFGHI'
+    #cols = '123456789'
     
-    _, _, _, peers = create_units(rows, cols)
+    #_, _, _, peers = create_units(rows, cols)
     
-    solved_values = [box for box in values.keys() if len(values[box]) == 1]
+    #solved_values = [box for box in values.keys() if len(values[box]) == 1]
  
-    for box in solved_values:
-        digit = values[box]
-        for peer in peers[box]:
-            values[peer] = values[peer].replace(digit,'')
+    #for box in solved_values:
+    #    digit = values[box]
+    #    for peer in peers[box]:
+    #        values[peer] = values[peer].replace(digit,'')
             
-    return values
+    #return values
+    pass
 
 def only_choice(values):
     
@@ -183,8 +203,7 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
-    values = grid_values(grid)
-    return values
+    
 
 if __name__ == '__main__':
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
