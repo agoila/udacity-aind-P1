@@ -15,6 +15,21 @@ def assign_value(values, box, value):
         assignments.append(values.copy())
     return values
 
+def cross(A, B):
+    "Cross product of elements in A and elements in B."
+    return [s+t for s in A for t in B]
+
+def create_units(rows, cols):
+
+    myboxes = cross(rows, cols)
+    row_units = [cross(r, cols) for r in rows]
+    column_units = [cross(rows, c) for c in cols]
+    square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
+    myunitlist = row_units + column_units + square_units
+    myunits = dict((s, [u for u in myunitlist if s in u]) for s in myboxes)
+    
+    return myunits, myunitlist, myboxes
+
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
     Args:
@@ -23,13 +38,26 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
-
-def cross(A, B):
-    "Cross product of elements in A and elements in B."
-    pass
+    
+    rows = 'ABCDEFGHI'
+    cols = '123456789'
+    
+    _, unitlist, _ = create_units(rows, cols)
+    
+    for unit in unitlist:
+        double_dgt_boxes = [box for box in unit if len(values[box]) == 2]
+        box_pairs = [box for box in double_dgt_boxes if len(double_dgt_boxes) == 2]
+        twin_pairs = [box for box in box_pairs if values[box_pairs[0]] == values[box_pairs[1]]]
+        if twin_pairs != []:
+            digits = values[twin_pairs[0]]
+            for box in unit:
+                if box != twin_pairs[0] and box!= twin_pairs[1] and len(values[box]) > 2:
+                    for digit in digits:
+                        values[box] = values[box].replace(digit, '')
+    
+    return values
 
 def grid_values(grid):
     """
@@ -46,10 +74,21 @@ def grid_values(grid):
 def display(values):
     """
     Display the values as a 2-D grid.
-    Args:
-        values(dict): The sudoku in dictionary form
+    Input: The sudoku in dictionary form
+    Output: None
     """
-    pass
+    rows = 'ABCDEFGHI'
+    cols = '123456789'
+    
+    _, _, boxes = create_units(rows, cols)
+    
+    width = 1+max(len(values[s]) for s in boxes)
+    line = '+'.join(['-'*(width*3)]*3)
+    for r in rows:
+        print(''.join(values[r+c].center(width)+('|' if c in '36' else '')
+                      for c in cols))
+        if r in 'CF': print(line)
+    return
 
 def eliminate(values):
     pass
