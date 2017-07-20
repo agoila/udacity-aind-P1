@@ -20,6 +20,7 @@ def cross(A, B):
     "Cross product of elements in A and elements in B."
     return [s+t for s in A for t in B]
 
+# Function for creating units, peers, boxes and unitlist
 def create_units(rows, cols):
 
     myboxes = cross(rows, cols)
@@ -27,11 +28,13 @@ def create_units(rows, cols):
     column_units = [cross(rows, c) for c in cols]
     square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
     
-    main_diag = [rows[i]+cols[i] for i in range(len(rows))]
-    secondary_diag = [rows[i]+cols[::-1][i] for i in range(len(rows))]
-    diagonal_units = list(set(main_diag + secondary_diag))
+    # Create a list of all the diagonal elements/boxes in both the diagonals.
+    diag_list = [[rows[i]+cols[i] for i in range(len(rows))], [rows[i]+cols[::-1][i] for i in range(len(rows))]]
     
-    myunitlist = row_units + column_units + square_units
+    # Include diag_list in unitlist. 
+    # This adds another constraint while searching through every unit in unitlist.
+    myunitlist = row_units + column_units + square_units + diag_list
+    
     myunits = dict((s, [u for u in myunitlist if s in u]) for s in myboxes)
     mypeers = dict((s, set(sum(myunits[s],[]))-set([s])) for s in myboxes)
     
@@ -70,9 +73,9 @@ def naked_twins(values):
                 # For each digit in naked twins' digits
                 for digit in digits:
                     # Check pre-condition that the box has more than 1 digit and is not the same as any of the naked twins
-                    # And remove those digits.
+                    # And remove those digits in these boxes.
                     if len(values[box]) > 1 and box != twins[0] and box != twins[1]:
-                        values[box] = values[box].replace(digit, '')
+                        assign_value(values, box, values[box].replace(digit, ''))
     
     return values
 
@@ -88,6 +91,8 @@ def grid_values(grid):
             Keys: The boxes, e.g., 'A1'
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
+    # Carrying over from the code given in lectures
+    # Obtain boxes from create_units(); to be used in the code.
     rows = 'ABCDEFGHI'
     cols = '123456789'
     
@@ -109,6 +114,8 @@ def display(values):
     Input: The sudoku in dictionary form
     Output: None
     """
+    # Carrying over from the code given in lectures
+    # Obtain boxes from create_units(); to be used in the code.
     rows = 'ABCDEFGHI'
     cols = '123456789'
     
@@ -123,43 +130,53 @@ def display(values):
     return
 
 def eliminate(values):
-    #rows = 'ABCDEFGHI'
-    #cols = '123456789'
+    # Carrying over from the code given in lectures
+    # Obtain peers from create_units(); to be used in the code.
+    rows = 'ABCDEFGHI'
+    cols = '123456789'
+    # Constraint propagation gets applied to members of diag_list as well
+    # through their peers.
+    _, _, _, peers = create_units(rows, cols)
     
-    #_, _, _, peers = create_units(rows, cols)
-    
-    #solved_values = [box for box in values.keys() if len(values[box]) == 1]
+    solved_values = [box for box in values.keys() if len(values[box]) == 1]
  
-    #for box in solved_values:
-    #    digit = values[box]
-    #    for peer in peers[box]:
-    #        values[peer] = values[peer].replace(digit,'')
+    for box in solved_values:
+        digit = values[box]
+        for peer in peers[box]:
+            assign_value(values, peer, values[peer].replace(digit,''))
             
-    #return values
-    pass
+    return values
 
 def only_choice(values):
-    
+    # Carrying over from the code given in lectures
+    # Obtain unitlist from create_units(); to be used in the code.
     rows = 'ABCDEFGHI'
     cols = '123456789'
     
     _, unitlist, _, _ = create_units(rows, cols)
-    
+    # Constraint propagation gets applied to members of diag_list as well.
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
             if len(dplaces) == 1:
-                values[dplaces[0]] = digit
+                assign_value(values, dplaces[0], digit)
     
     return values
 
 def reduce_puzzle(values):
+    # Carrying over from the code given in lectures
     solved_values = [box for box in values.keys() if len(values[box]) == 1]
     stalled = False
     while not stalled:
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
+        # Constraint propagation steps
+        # 1. Eliminate
         values = eliminate(values)
+        # 2. Only_Choice
         values = only_choice(values)
+        # Call naked_twins() during reduce_puzzle() operation.
+        # 3. Naked_Twins
+        values = naked_twins(values)
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         stalled = solved_values_before == solved_values_after
         if len([box for box in values.keys() if len(values[box]) == 0]):
@@ -167,7 +184,8 @@ def reduce_puzzle(values):
     return values
 
 def search(values):
-    
+    # Carrying over from the code given in lectures
+    # Obtain boxes from create_units(); to be used in the code.
     rows = 'ABCDEFGHI'
     cols = '123456789'
     
@@ -197,6 +215,23 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
+    # Carrying over from the code given in lectures
+    # Obtain peers from create_units(); to be used in the code.
+    rows = 'ABCDEFGHI'
+    cols = '123456789'
+    
+    _, _, boxes, _ = create_units(rows, cols)
+    # Apply grid_values() to convert to a numeric dictionary (replacing dots with integers).
+    step1 = grid_values(grid)
+    # Perform DFS with Constraint Propagation as described above.
+    step2 = search(step1)
+    # If no solution
+    if step2 is False:
+        return False
+    # If solved, return dictionary
+    if all(len(step2[s]) == 1 for s in boxes):
+        return step2
+    
     
 
 if __name__ == '__main__':
