@@ -3,11 +3,17 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: We solve the naked twins problem by enforcing the constraint that no squares outside the two naked twins squares can contain the twin values. The way I implemented this in my code is as follows:
+* For every unit in the puzzle, find out the boxes with only two-digit values (eg. '12', '23' etc.)
+* Find the naked twins from among these boxes i.e. boxes with same two-digit values and pair them up like [box1, box2].
+* For every naked twin pair, replace from their peers the naked twin digits such that no box outside of these naked twins contains the twin values.
+* Repeat this process for the next unit. 
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: We used constraint propagation to solve the diagonal sudoku by adding the diagonals to the set of constraints. Specifically, I used the following steps:
+* Create a list of all the diagonals (primary and secondary), and add it to the list `unitlist`.
+* Since the `unitlist` is used in the creation of units and peers, every item of the diagonal list shows up as a constraint while trying to solve the puzzle using `eliminate()` and `only_choice()` methods. 
 
 ### Install
 
