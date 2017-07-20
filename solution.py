@@ -29,9 +29,9 @@ def create_units(rows, cols):
     
     main_diag = [rows[i]+cols[i] for i in range(len(rows))]
     secondary_diag = [rows[i]+cols[::-1][i] for i in range(len(rows))]
-    diagonal_units = main_diag + secondary_diag
+    diagonal_units = list(set(main_diag + secondary_diag))
     
-    myunitlist = row_units + column_units + square_units 
+    myunitlist = row_units + column_units + square_units
     myunits = dict((s, [u for u in myunitlist if s in u]) for s in myboxes)
     mypeers = dict((s, set(sum(myunits[s],[]))-set([s])) for s in myboxes)
     
@@ -48,37 +48,31 @@ def naked_twins(values):
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
     
-    #rows = 'ABCDEFGHI'
-    #cols = '123456789'
-    
-    #_, unitlist, _, peers = create_units(rows, cols)
-    
-    #for unit in unitlist:
-    #    double_dgt_boxes = [box for box in unit if len(values[box]) == 2]
-    #    box_pairs = [box for box in double_dgt_boxes if len(double_dgt_boxes) == 2]
-    #    twin_pairs = [box for box in box_pairs if values[box_pairs[0]] == values[box_pairs[1]]]
-    #    if twin_pairs != []:
-    #        digits = values[twin_pairs[0]]
-    #        for box in unit:
-    #            if box != twin_pairs[0] and box != twin_pairs[1] and len(values[box]) > 1:
-    #                for digit in digits:
-    #                    values[box] = values[box].replace(digit, '')
-    
+    # Use create_units function to return unitlist and peers dict.
     rows = 'ABCDEFGHI'
     cols = '123456789'
-    
     _, unitlist, _, peers = create_units(rows, cols)
-
-    double_dgt_boxes = [box for box in values.keys() if len(values[box]) == 2]
-    n_twins = [[box1, box2] for box1, box2 in itertools.combinations(double_dgt_boxes, 2) if values[box1] == values[box2]]
-    for twins in n_twins:
-        digits = [values[box] for box in twins][0]
-        twin_peers = [peers[box] for box in twins]
-        unique_peers = list(set(twin_peers[0] & twin_peers[1]))
-        for box in unique_peers:
-            for digit in digits:
-                if len(values[box]) > 1:
-                    values[box] = values[box].replace(digit, '')
+    
+    # Run a for loop through every unit in unitlist
+    for unit in unitlist:
+        # Get the boxes with only 2 values in a unit
+        double_dgt_boxes = [box for box in unit if len(values[box]) == 2]
+        # Get the twin pairs i.e. boxes with the same values occurring in pairs in a given unit.
+        n_twins = [[box1, box2] for box1, box2 in itertools.combinations(double_dgt_boxes, 2) if values[box1] == values[box2]]
+        # Iterate through the naked twins or boxes
+        for twins in n_twins:
+            # Store the naked twins value in digits
+            digits = values[twins[0]]
+            # Find the unique peers shared by the naked twins
+            unique_peers = list(set(peers[twins[0]] & peers[twins[1]]))
+            # For every box in the unique peer list
+            for box in unique_peers:
+                # For each digit in naked twins' digits
+                for digit in digits:
+                    # Check pre-condition that the box has more than 1 digit and is not the same as any of the naked twins
+                    # And remove those digits.
+                    if len(values[box]) > 1 and box != twins[0] and box != twins[1]:
+                        values[box] = values[box].replace(digit, '')
     
     return values
 

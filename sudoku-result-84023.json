@@ -1,0 +1,28 @@
+{
+    "tests": [
+        {
+            "description": "the solve method produces a valid solution.",
+            "traceback": "Traceback (most recent call last):\n  File \"run3.py\", line 99, in test_solve\n    self.assertTrue(s in values,\nTypeError: argument of type 'NoneType' is not iterable\n\nDuring handling of the above exception, another exception occurred:\n\nTypeError: fail() missing 1 required positional argument: 'advice'\n",
+            "message": "The solution was not found.",
+            "advice": "Try your code on the following example:\n9.1....8.8.5.7..4.2.4....6...7......5..............83.3..6......9................\n",
+            "result": "E",
+            "rubric_item_id": "5530"
+        },
+        {
+            "description": "the naked_twins method applies the 'naked twins' heuristic.",
+            "traceback": "AssertionError: False is not true : Your naked_twins function produced an unexpected board.\n",
+            "message": "Your naked_twins function produced an unexpected board.",
+            "advice": "Try the following example and see what happens:\n{\"I6\": \"12369\", \"H9\": \"12\", \"I2\": \"4\", \"E8\": \"12469\", \"H3\": \"3\", \"H7\": \"6\", \"I7\": \"1235789\", \"I4\": \"12369\", \"H5\": \"8\", \"F9\": \"123568\", \"G7\": \"1234589\", \"G6\": \"123469\", \"G5\": \"23469\", \"E1\": \"1246\", \"G3\": \"125689\", \"G2\": \"7\", \"G1\": \"12569\", \"I1\": \"12569\", \"C8\": \"1235678\", \"I3\": \"125689\", \"E5\": \"2469\", \"I5\": \"2369\", \"C9\": \"123568\", \"G9\": \"12358\", \"G8\": \"1234589\", \"A1\": \"1234567\", \"A3\": \"124567\", \"A2\": \"1256\", \"A5\": \"234567\", \"A4\": \"23467\", \"A7\": \"12357\", \"A6\": \"8\", \"C3\": \"12456789\", \"C2\": \"12568\", \"C1\": \"12345679\", \"E6\": \"5\", \"C7\": \"123578\", \"C6\": \"23469\", \"C5\": \"2345679\", \"C4\": \"234679\", \"I9\": \"12358\", \"D8\": \"1234569\", \"I8\": \"1235789\", \"E4\": \"8\", \"D9\": \"12356\", \"H8\": \"1249\", \"F6\": \"12346\", \"A9\": \"9\", \"G4\": \"123469\", \"A8\": \"123567\", \"E7\": \"1249\", \"E3\": \"1246\", \"F1\": \"124567\", \"F2\": \"9\", \"F3\": \"124567\", \"F4\": \"123467\", \"F5\": \"23467\", \"E2\": \"3\", \"F7\": \"123458\", \"F8\": \"1234568\", \"D2\": \"1256\", \"H1\": \"129\", \"H6\": \"7\", \"H2\": \"12\", \"H4\": \"5\", \"D3\": \"124567\", \"B4\": \"23679\", \"B5\": \"1\", \"B6\": \"2369\", \"B7\": \"23578\", \"E9\": \"7\", \"B1\": \"235679\", \"B2\": \"2568\", \"B3\": \"256789\", \"D6\": \"123469\", \"D7\": \"123459\", \"D4\": \"1234679\", \"D5\": \"234679\", \"B8\": \"235678\", \"B9\": \"4\", \"D1\": \"8\"}",
+            "result": "F",
+            "rubric_item_id": "5531"
+        },
+        {
+            "description": "the README has been modified.",
+            "traceback": "",
+            "message": null,
+            "advice": null,
+            "result": ".",
+            "rubric_item_id": null
+        }
+    ]
+}
